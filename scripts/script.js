@@ -54,6 +54,14 @@ var TriviaGame = function(totalQuestions) {
     question: "Where does the Green Arrow operate?",
     options: ["Chicago", "Atlanta", "Gotham", "Star City"],
     answer: "Star City"
+  },{
+    question: "Which superhero was given a special serum to help the war effort?",
+    options: ["Captain America", "The Hulk", "Spiderman", "Wolfman"],
+    answer: "Captain America"
+  },{
+    question: "Which superhero is also known as Ronin and Goliath?",
+    options: ["Hawkeye", "Iron Man", "The Beast", "Cyclops"],
+    answer: "Hawkeye"
   }];
 };
 //Trivia game functions
@@ -80,27 +88,27 @@ TriviaGame.prototype = {
   //checks player choice against current answer
   playTurn: function(choice) {
     if(this.currQnNo > -1){
-      this.player1Turn = !this.player1Turn;
       console.log("Your choice: " + choice + ", correct answer: " + this.correctAnswer());
       if (choice == this.correctAnswer()) {
         if (this.player1Turn) {
-          //using inverse adding of scores because player turn already swapped for next turn
-          this.player2Score++;
-        } else {
-          //using inverse adding of scores because player turn already swapped for next turn
           this.player1Score++;
+        } else {
+          this.player2Score++;
         }
-        this.totalQuestions--;
-        this.questions.splice(this.currQnNo, 1);
+        this.statusUpdate();
         return true;
       } else {
-        this.totalQuestions--;
-        this.questions.splice(this.currQnNo, 1);
+        this.statusUpdate();
         return false;
       }
     }else{
       return true;
     }
+  },
+  statusUpdate: function(){
+    this.player1Turn = !this.player1Turn;
+    this.totalQuestions--;
+    this.questions.splice(this.currQnNo, 1);
   },
   //checks if any more questions to be asked for game
   gameOver: function() {
@@ -138,30 +146,33 @@ $(document).ready(function() {
     //retrieve the answer at that index
     var options = game.questions[currQn].options;
     var qnNumber = 10 - game.totalQuestions;
+
     //display the question
     $('.headerSection > h1').text(qnNumber + ". " + question);
     //display the options
     $('button').each(function(index) {
       $(this).text(options[index]);
     });
+    updateScores();
     //display turn
     if (game.player1Turn) {
-      //Update previous player's score
-      $('.player2.score').text("Score: " + game.player2Score);
       //Update new player's turn
       $('.headerSection > h3').text("Player 1's turn");
       $('.headerSection > h3').attr("class", "player1");
-    } else {
-      //Update previous player's score
-      $('.player1.score').text("Score: " + game.player1Score);
+          } else {
       //Update new player's turn
       $('.headerSection > h3').text("Player 2's turn");
       $('.headerSection > h3').attr("class", "player2");
     }
-
+  }
+  //Update player scores
+  function updateScores(){
+    $('.player2.score').text("Score: " + game.player2Score);
+    $('.player1.score').text("Score: " + game.player1Score);
   }
 
   $('button').click(function() {
+
     if (!game.gameOver() && !gameStart) {
       //checks answer and display feedback
       if (game.playTurn($(this).val())) {
@@ -175,8 +186,9 @@ $(document).ready(function() {
       clickerEvent();
       gameStart = false;
     } else {
+      game.playTurn($(this).val());
+      updateScores();
       var winner = game.whoWon();
-      alert(winner);
       switch(winner){
         case 1:
           alert("Player 1 is the winner!");
