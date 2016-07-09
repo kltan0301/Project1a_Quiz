@@ -36,7 +36,7 @@ button:hover {
   background: white;
   height: 22%;
   width: 40%;
-  margin: 20px;
+  margin: 2.5% 4.5%;
   border-radius: 5px;
   text-align: center;
   box-sizing: border-box;
@@ -50,24 +50,26 @@ button:hover {
   border-radius: 50%;
   box-sizing: border-box;
 }
-.playerStats {
+.playerStats1, .playerStats2 {
   padding: 0 20px;
 }
+.playerStats1 {
+  float: left;
+}
+.playerStats2 {
+  float: right;
+}
+.player1{
+  color: #FF9800;
+}
+.player2 {
+  color: #4885ed;
+}
 #player1 img {
+  float: left;
   border: 6px solid #FF9800;
 }
 #player2 img {
-  border: 6px solid #4885ed;
-}
-#player1 .playerStats h3, #player1 .playerStats h5{
-  color: #FF9800;
-}
-#player1 img:nth-child(1), #player1 .playerStats{
-  float: left;
-}
-#player2 .playerStats h3, #player2 .playerStats h5{
-  color: #4885ed;
-}
-#player2 img:nth-child(1), #player2 .playerStats{
   float: right;
+  border: 6px solid #4885ed;
 }
