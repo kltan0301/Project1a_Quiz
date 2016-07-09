@@ -1,10 +1,10 @@
 body{
-  background: black;
+  background: #242626;
 }
 * {
   font-family: 'Montserrat', sans-serif;
 }
-h1, h3, h5 {
+h1, h3{
   color: white;
   text-align: center;
 }
@@ -12,13 +12,14 @@ h1 {
   font-size: 5.0em;
 }
 h5 {
+  color: white;
   text-align: left;
   margin: -20px 0;
 }
-button {
+.option {
   font-size: 1.5em;
 }
-button:hover {
+.option:hover {
   background: #4c4c4c;
   color: white;
 }
@@ -39,7 +40,7 @@ button:hover {
   margin: 2.5% 4.5%;
   border-radius: 5px;
   text-align: center;
-  box-sizing: border-box;
+  /*box-sizing: border-box;*/
   line-height: 60px;
 }
 .clearSection {
@@ -60,16 +61,16 @@ button:hover {
   float: right;
 }
 .player1{
-  color: #FF9800;
+  color: #FF6E1F;
 }
 .player2 {
-  color: #4885ed;
+  color: #5B60FF;
 }
 #player1 img {
   float: left;
-  border: 6px solid #FF9800;
+  border: 6px solid #FF6E1F;
 }
 #player2 img {
   float: right;
-  border: 6px solid #4885ed;
+  border: 6px solid #5B60FF;
 }

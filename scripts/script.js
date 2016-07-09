@@ -23,7 +23,7 @@ var TriviaGame = function(totalQuestions) {
     options: ["Hawkman", "The Tornado", "The Atom", "The Green Arrow"],
     answer: "The Atom"
   }, {
-    question: "Which superhero is associated with the phrase, 'With great power there must also come great responsibility'?",
+    question: "Which superhero is associated with the phrase, 'With great power comes great responsibility'?",
     options: ["Hell Boy", "Batman", "The Hulk", "Spiderman"],
     answer: "Spiderman"
   }, {
@@ -39,7 +39,7 @@ var TriviaGame = function(totalQuestions) {
     options: ["The Chief of Police", "Batman's Butler", "The Governor", "The Mayor"],
     answer: "The Chief of Police"
   }, {
-    question: "Which superhero gains his power from a ring? ",
+    question: "Which superhero gains his power from a ring?",
     options: ["Dazzler", "Storm", "The Hulk", "The Green Lantern"],
     answer: "The Green Lantern"
   }, {
@@ -88,7 +88,6 @@ TriviaGame.prototype = {
   //checks player choice against current answer
   playTurn: function(choice) {
     if(this.currQnNo > -1){
-      console.log("Your choice: " + choice + ", correct answer: " + this.correctAnswer());
       if (choice == this.correctAnswer()) {
         if (this.player1Turn) {
           this.player1Score++;
@@ -105,6 +104,7 @@ TriviaGame.prototype = {
       return true;
     }
   },
+  //updates turn switch and question array
   statusUpdate: function(){
     this.player1Turn = !this.player1Turn;
     this.totalQuestions--;
@@ -120,16 +120,12 @@ TriviaGame.prototype = {
   },
   //checks for draws or wins
   whoWon: function() {
-    if (this.gameOver()) {
-      if (this.player1Score > this.player2Score) {
-        return 1;
-      } else if (this.player2Score > this.player1Score) {
-        return 2;
-      } else {
-        return 3;
-      }
+    if (this.player1Score > this.player2Score) {
+      return 1;
+    } else if (this.player2Score > this.player1Score) {
+      return 2;
     } else {
-      return 0;
+      return 3;
     }
   }
 };
@@ -170,15 +166,50 @@ $(document).ready(function() {
     $('.player2.score').text("Score: " + game.player2Score);
     $('.player1.score').text("Score: " + game.player1Score);
   }
+  function alertBox(type, winner){
+    var alertWidth = 400;
+    switch(type){
+      case 0:
+        swal({
+          title: 'Right on!',
+          background: '#00FF7F',
+          width: alertWidth
+        });
+        break;
+      case 1:
+        swal({
+          title: 'Wrong answer!',
+          background: '#FF5454',
+          width: alertWidth
+        });
+        break;
+      case 2:
+        var result = "";
+        if(winner === 3){
+          result = "It's a draw!";
+        }else{
+          result = "Player " + winner + " is the winner!";
+        }
+        swal({
+          title: result,
+          background: '#FFDE29',
+          width: alertWidth,
+          confirmButtonText: 'Restart Game',
+          allowOutsideClick: false
+        }).then(function() {
+            location.reload();
+          });
+        break;
+    }
 
+  }
   $('button').click(function() {
-
     if (!game.gameOver() && !gameStart) {
       //checks answer and display feedback
       if (game.playTurn($(this).val())) {
-        alert("You're right!");
+        alertBox(0);
       } else {
-        alert("Sorry, not quite");
+        alertBox(1);
       }
       //Update displays
       clickerEvent();
@@ -189,17 +220,7 @@ $(document).ready(function() {
       game.playTurn($(this).val());
       updateScores();
       var winner = game.whoWon();
-      switch(winner){
-        case 1:
-          alert("Player 1 is the winner!");
-          break;
-        case 2:
-          alert("Player 2 is the winner!");
-          break;
-        default:
-          alert("It's a draw!");
-      }
-      location.reload();
+      alertBox(2,winner);
     }
   });
 });
