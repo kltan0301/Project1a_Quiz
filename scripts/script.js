@@ -202,7 +202,8 @@ $(document).ready(function() {
           background: '#00FF7F',
           width: alertWidth,
           confirmButtonText: btnConfirmText,
-          allowOutsideClick: allowClickable
+          allowOutsideClick: allowClickable,
+          allowEscapeKey: false
         }).then(function() {
           clickerEvent();
         });
@@ -214,7 +215,8 @@ $(document).ready(function() {
           background: '#FF5454',
           confirmButtonText: btnConfirmText,
           width: alertWidth,
-          allowOutsideClick: allowClickable
+          allowOutsideClick: allowClickable,
+          allowEscapeKey: false
         }).then(function() {
           clickerEvent();
         });
