@@ -1,12 +1,101 @@
 //Trivia Game parameters
-var TriviaGame = function(totalQuestions) {
+var TriviaGame = function(totalQuestions, questions) {
   this.player1Score = 0;
   this.player2Score = 0;
-  this.totalQuestions = totalQuestions-1;
+  this.totalQuestions = totalQuestions - 1;
   this.player1Turn = true;
   this.currQnNo = -1;
-  //question list
-  this.questions = [{
+  this.questions = questions;
+  this.rightResponse = ["Like a boss!", "How'd you know that?!","Superb!"];
+  this.wrongResponse = ["Uh-oh","Not quite.","Wrong answer!"];
+};
+//Trivia game functions
+TriviaGame.prototype = {
+  constructor: TriviaGame,
+  //returns number of questions in a game
+  numberOfQuestions: function() {
+    return this.totalQuestions;
+  },
+  //return index of current question
+  currentQuestion: function() {
+    this.currQnNo = Math.floor(Math.random() * this.questions.length);
+    return this.currQnNo;
+  },
+  //return correct answer for current question
+  correctAnswer: function() {
+    var answer = this.questions[this.currQnNo].answer;
+    return this.questions[this.currQnNo].options.indexOf(answer);
+  },
+  //return number of choices for current question
+  numberOfAnswers: function() {
+    return this.questions[this.currQnNo].options.length;
+  },
+  //checks player choice against current answer
+  playTurn: function(choice) {
+    if (this.currQnNo > -1) {
+      if (choice == this.correctAnswer()) {
+        if (this.player1Turn) {
+          this.player1Score++;
+        } else {
+          this.player2Score++;
+        }
+        this.statusUpdate();
+        return true;
+      } else {
+        this.statusUpdate();
+        return false;
+      }
+    } else {
+      return true;
+    }
+  },
+  //updates turn switch and question array
+  statusUpdate: function() {
+    this.player1Turn = !this.player1Turn;
+    this.totalQuestions--;
+    this.questions.splice(this.currQnNo, 1);
+  },
+  //checks if any more questions to be asked for game
+  gameOver: function() {
+    if (this.totalQuestions <= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  //checks for draws or wins
+  whoWon: function() {
+    if (this.gameOver()) {
+      if (this.player1Score > this.player2Score) {
+        return 1;
+      } else if (this.player2Score > this.player1Score) {
+        return 2;
+      } else {
+        return 3;
+      }
+    }
+    return 0;
+  },
+  //retrieve question
+  getQuestionAndOptions: function() {
+    return {
+      question: this.questions[this.currQnNo].question,
+      options: this.questions[this.currQnNo].options
+    };
+  },
+  getRightResponse: function() {
+    return this.rightResponse[Math.floor(Math.random() * this.rightResponse.length)];
+  },
+  getWrongResponse: function() {
+    return this.wrongResponse[Math.floor(Math.random() * this.wrongResponse.length)];
+  },
+};
+$(document).ready(function() {
+  var gameStart = true;
+  var totalQns = 10;
+  var buttons = $('button');
+
+  var questionList = [{
     question: "Which superhero carries an indestructible shield?",
     options: ["The green lantern", "The Red Tornado", "Captain America", "Captain Flag"],
     answer: "Captain America"
@@ -46,103 +135,35 @@ var TriviaGame = function(totalQuestions) {
     question: "Which superhero can manipulate the weather?",
     options: ["The Atom", "Storm", "The Tornado", "The Thing"],
     answer: "Storm"
-  },{
+  }, {
     question: "Which Island does Wonder Woman call home?",
     options: ["Amazonia", "Eden Isle", "Emerald Island", "Paradise Island"],
     answer: "Paradise Island"
-  },{
+  }, {
     question: "Where does the Green Arrow operate?",
     options: ["Chicago", "Atlanta", "Gotham", "Star City"],
     answer: "Star City"
-  },{
+  }, {
     question: "Which superhero was given a special serum to help the war effort?",
     options: ["Captain America", "The Hulk", "Spiderman", "Wolfman"],
     answer: "Captain America"
-  },{
+  }, {
     question: "Which superhero is also known as Ronin and Goliath?",
     options: ["Hawkeye", "Iron Man", "The Beast", "Cyclops"],
     answer: "Hawkeye"
   }];
-};
-//Trivia game functions
-TriviaGame.prototype = {
-  //returns number of questions in a game
-  constructor: TriviaGame,
-  numberOfQuestions: function() {
-    return this.totalQuestions;
-  },
-  //return index of current question
-  currentQuestion: function() {
-    this.currQnNo = Math.floor(Math.random() * this.questions.length);
-    return this.currQnNo;
-  },
-  //return correct answer for current question
-  correctAnswer: function() {
-    var answer = this.questions[this.currQnNo].answer;
-    return this.questions[this.currQnNo].options.indexOf(answer);
-  },
-  //return number of choices for current question
-  numberOfAnswers: function() {
-    return this.questions[this.currQnNo].options.length;
-  },
-  //checks player choice against current answer
-  playTurn: function(choice) {
-    if(this.currQnNo > -1){
-      if (choice == this.correctAnswer()) {
-        if (this.player1Turn) {
-          this.player1Score++;
-        } else {
-          this.player2Score++;
-        }
-        this.statusUpdate();
-        return true;
-      } else {
-        this.statusUpdate();
-        return false;
-      }
-    }else{
-      return true;
-    }
-  },
-  //updates turn switch and question array
-  statusUpdate: function(){
-    this.player1Turn = !this.player1Turn;
-    this.totalQuestions--;
-    this.questions.splice(this.currQnNo, 1);
-  },
-  //checks if any more questions to be asked for game
-  gameOver: function() {
-    if (this.totalQuestions === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  },
-  //checks for draws or wins
-  whoWon: function() {
-    if (this.player1Score > this.player2Score) {
-      return 1;
-    } else if (this.player2Score > this.player1Score) {
-      return 2;
-    } else {
-      return 3;
-    }
-  }
-};
-$(document).ready(function() {
-  var gameStart = true;
-  var game = new TriviaGame(10);
-  var buttons = $('button');
-
+  //create new game object
+  var game = new TriviaGame(totalQns, questionList);
+  //function which will trigger anytime a button is clicked
   function clickerEvent() {
     //generate a new question
     var currQn = game.currentQuestion();
     //retrieve the question at that index
-    var question = game.questions[currQn].question;
-    //retrieve the answer at that index
-    var options = game.questions[currQn].options;
-    var qnNumber = 10 - game.totalQuestions;
-
+    var question = game.getQuestionAndOptions().question;
+    //retrieve the options for that question
+    var options = game.getQuestionAndOptions().options;
+    //get question number
+    var qnNumber = totalQns - game.numberOfQuestions();
     //display the question
     $('.headerSection > h1').text(qnNumber + ". " + question);
     //display the options
@@ -155,39 +176,54 @@ $(document).ready(function() {
       //Update new player's turn
       $('.headerSection > h3').text("Player 1's turn");
       $('.headerSection > h3').attr("class", "player1");
-          } else {
+    } else {
       //Update new player's turn
       $('.headerSection > h3').text("Player 2's turn");
       $('.headerSection > h3').attr("class", "player2");
     }
   }
   //Update player scores
-  function updateScores(){
-    $('.player2.score').text("Score: " + game.player2Score);
+  function updateScores() {
     $('.player1.score').text("Score: " + game.player1Score);
+    $('.player2.score').text("Score: " + game.player2Score);
   }
-  function alertBox(type, winner){
+  //Create customised alerts
+  function alertBox(type, winner) {
+    //common parameters for alert boxes
     var alertWidth = 400;
-    switch(type){
+    var btnConfirmText = "Next";
+    var allowClickable = false;
+
+    switch (type) {
       case 0:
+        var rightResponse = game.getRightResponse();
         swal({
-          title: 'Right on!',
+          title: rightResponse,
           background: '#00FF7F',
-          width: alertWidth
+          width: alertWidth,
+          confirmButtonText: btnConfirmText,
+          allowOutsideClick: allowClickable
+        }).then(function() {
+          clickerEvent();
         });
         break;
       case 1:
+        var wrongResponse = game.getWrongResponse();
         swal({
-          title: 'Wrong answer!',
+          title: wrongResponse,
           background: '#FF5454',
-          width: alertWidth
+          confirmButtonText: btnConfirmText,
+          width: alertWidth,
+          allowOutsideClick: allowClickable
+        }).then(function() {
+          clickerEvent();
         });
         break;
       case 2:
         var result = "";
-        if(winner === 3){
+        if (winner === 3) {
           result = "It's a draw!";
-        }else{
+        } else {
           result = "Player " + winner + " is the winner!";
         }
         swal({
@@ -197,12 +233,12 @@ $(document).ready(function() {
           confirmButtonText: 'Restart Game',
           allowOutsideClick: false
         }).then(function() {
-            location.reload();
-          });
+          location.reload();
+        });
         break;
     }
-
   }
+  //click function on button click
   $('button').click(function() {
     if (!game.gameOver() && !gameStart) {
       //checks answer and display feedback
@@ -211,16 +247,16 @@ $(document).ready(function() {
       } else {
         alertBox(1);
       }
-      //Update displays
-      clickerEvent();
-    } else if(gameStart) {
+    } else if (gameStart) {
+      //start generating questions
       clickerEvent();
       gameStart = false;
     } else {
+      //play final round and determine winner
       game.playTurn($(this).val());
       updateScores();
       var winner = game.whoWon();
-      alertBox(2,winner);
+      alertBox(2, winner);
     }
   });
 });
